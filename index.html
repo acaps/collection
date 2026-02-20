@@ -1,0 +1,1627 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Collection</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --paper:#0f141a;
+      --card:rgba(255,255,255,0.06);
+      --card2:rgba(255,255,255,0.08);
+      --stroke:rgba(255,255,255,0.10);
+      --stroke2:rgba(255,255,255,0.14);
+      --text:rgba(255,255,255,0.92);
+      --muted:rgba(255,255,255,0.70);
+      --faint:rgba(255,255,255,0.52);
+      --accent:#19c37d;
+      --accent2:rgba(25,195,125,0.18);
+      --shadow:0 14px 40px rgba(0,0,0,0.45);
+      --shadow2:0 10px 28px rgba(0,0,0,0.35);
+      --radius:18px;
+      --radius2:26px;
+      --max:1040px;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --sans:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      --serif:ui-serif,Georgia,Cambria,"Times New Roman",Times,serif;
+    }
+
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f6f7f8;
+        --paper:#ffffff;
+        --card:rgba(17,24,39,0.04);
+        --card2:rgba(17,24,39,0.06);
+        --stroke:rgba(17,24,39,0.10);
+        --stroke2:rgba(17,24,39,0.14);
+        --text:rgba(17,24,39,0.92);
+        --muted:rgba(17,24,39,0.70);
+        --faint:rgba(17,24,39,0.52);
+        --shadow:0 18px 45px rgba(17,24,39,0.08);
+        --shadow2:0 12px 28px rgba(17,24,39,0.06);
+      }
+    }
+
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 800px at 10% -10%, rgba(25,195,125,0.10), transparent 60%),
+        radial-gradient(900px 700px at 90% 20%, rgba(25,195,125,0.08), transparent 55%),
+        radial-gradient(1100px 900px at 50% 110%, rgba(255,255,255,0.06), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      font-family:var(--sans);
+      letter-spacing:0.2px;
+    }
+    a{color:inherit;text-decoration:none;}
+    button,input,textarea,select{font-family:inherit;}
+
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      background:linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.15));
+      border-bottom:1px solid var(--stroke);
+    }
+    @media (prefers-color-scheme: light){
+      .topbar{background:linear-gradient(to bottom, rgba(255,255,255,0.92), rgba(255,255,255,0.70));}
+    }
+    .topbar-inner{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+    .brand{display:flex;align-items:baseline;gap:10px;min-width:220px;}
+    .brand-mark{
+      width:36px;height:36px;border-radius:12px;
+      background:
+        radial-gradient(16px 16px at 28% 30%, rgba(255,255,255,0.55), transparent 60%),
+        radial-gradient(22px 22px at 70% 75%, rgba(25,195,125,0.55), transparent 60%),
+        linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+      border:1px solid var(--stroke2);
+      box-shadow:var(--shadow2);
+      position:relative;overflow:hidden;
+    }
+    .brand-mark:after{
+      content:"";position:absolute;inset:-40%;
+      background:conic-gradient(from 180deg, rgba(25,195,125,0.0), rgba(25,195,125,0.25), rgba(255,255,255,0.0));
+      animation:spin 10s linear infinite;filter:blur(10px);opacity:.75;
+    }
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .brand-name{font-size:16px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;}
+    .brand-sub{font-size:12px;color:var(--faint);font-family:var(--mono);transform:translateY(-1px);}
+
+    .search{
+      flex:1;
+      display:flex;align-items:center;gap:10px;
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      padding:10px 12px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .search svg{opacity:.7;}
+    .search input{
+      border:0;outline:none;width:100%;
+      background:transparent;color:var(--text);font-size:13px;
+    }
+    .search input::placeholder{color:var(--faint);}
+
+    .actions{display:flex;align-items:center;gap:10px;}
+    .pill{
+      display:flex;align-items:center;gap:8px;
+      padding:10px 12px;border-radius:999px;
+      border:1px solid var(--stroke);
+      background:var(--card);
+      color:var(--muted);
+      cursor:pointer;
+      transition:transform .15s ease, background .15s ease, border-color .15s ease, color .15s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .pill:hover{transform:translateY(-1px);background:var(--card2);border-color:var(--stroke2);color:var(--text);}
+    .pill:active{transform:translateY(0) scale(.99);}
+    .pill.accent{
+      background:linear-gradient(180deg, rgba(25,195,125,0.18), rgba(25,195,125,0.10));
+      border-color:rgba(25,195,125,0.35);
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:18px;
+      display:grid;
+      grid-template-columns:360px 1fr;
+      gap:18px;
+    }
+    @media (max-width: 980px){.wrap{grid-template-columns:1fr;}.brand{min-width:auto;}}
+    .rail{
+      position:sticky;top:74px;align-self:start;
+      display:flex;flex-direction:column;gap:14px;
+      height:calc(100vh - 92px);
+      overflow:auto;padding-bottom:8px;
+    }
+    @media (max-width: 980px){.rail{position:static;height:auto;overflow:visible;}}
+
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border:1px solid var(--stroke);
+      border-radius:var(--radius2);
+      box-shadow:var(--shadow2);
+      overflow:hidden;
+    }
+    .panel .hd{padding:14px 14px 10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .panel .hd h3{margin:0;font-size:13px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);}
+    .panel .bd{padding:0 14px 14px 14px;}
+
+    .statline{display:flex;gap:10px;flex-wrap:wrap;}
+    .chip{
+      border:1px solid var(--stroke);
+      background:var(--card);
+      padding:10px 12px;border-radius:16px;
+      min-width:148px;
+    }
+    .chip .k{font-size:11px;color:var(--faint);font-family:var(--mono);}
+    .chip .v{margin-top:6px;font-size:14px;font-weight:600;letter-spacing:.2px;}
+    .chip .v small{color:var(--faint);font-weight:500;}
+
+    .filters{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+    .seg{
+      display:flex;
+      border:1px solid var(--stroke);
+      background:var(--card);
+      border-radius:999px;
+      overflow:hidden;
+    }
+    .seg button{
+      border:0;background:transparent;color:var(--muted);
+      padding:10px 12px;cursor:pointer;font-size:12px;
+      transition:background .15s ease, color .15s ease;
+    }
+    .seg button.active{background:rgba(25,195,125,0.18);color:var(--text);}
+
+    .note{margin-top:10px;font-size:12px;color:var(--faint);line-height:1.45;}
+    .tag{
+      font-size:11px;color:var(--faint);
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,0.03);
+      padding:8px 10px;border-radius:999px;
+      font-family:var(--mono);user-select:none;
+      white-space:nowrap;
+    }
+    .tag.ac{border-color:rgba(25,195,125,0.35);background:rgba(25,195,125,0.10);color:rgba(25,195,125,0.95);}
+
+    .stories{display:flex;gap:12px;overflow:auto;padding:12px 14px 14px 14px;scrollbar-width:thin;}
+    .story{min-width:104px;max-width:104px;display:flex;flex-direction:column;gap:8px;cursor:pointer;user-select:none;}
+    .story .ring{
+      width:72px;height:72px;border-radius:999px;padding:2px;
+      background:conic-gradient(from 90deg, rgba(25,195,125,0.95), rgba(25,195,125,0.25), rgba(255,255,255,0.35), rgba(25,195,125,0.95));
+      box-shadow:var(--shadow2);
+    }
+    .story .thumb{
+      width:100%;height:100%;border-radius:999px;
+      background:linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+      border:1px solid rgba(255,255,255,0.16);
+      overflow:hidden;position:relative;
+      display:grid;place-items:center;
+    }
+    .story img{width:100%;height:100%;object-fit:cover;filter:saturate(1.05) contrast(1.03);transform:scale(1.02);}
+    .story .label{font-size:12px;color:var(--muted);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+    .feed{display:flex;flex-direction:column;gap:14px;min-height:60vh;}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border:1px solid var(--stroke);
+      border-radius:var(--radius2);
+      overflow:hidden;
+      box-shadow:var(--shadow2);
+    }
+    .card .meta{
+      padding:14px 14px 12px 14px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+    .who{display:flex;align-items:center;gap:10px;min-width:0;}
+    .avatar{
+      width:38px;height:38px;border-radius:14px;
+      background:
+        radial-gradient(14px 14px at 30% 30%, rgba(255,255,255,0.55), transparent 60%),
+        radial-gradient(18px 18px at 70% 80%, rgba(25,195,125,0.45), transparent 60%),
+        linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02));
+      border:1px solid var(--stroke2);
+      box-shadow:var(--shadow2);
+      flex:0 0 auto;
+    }
+    .who .names{min-width:0;display:flex;flex-direction:column;gap:2px;}
+    .who .artist{font-size:13px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .who .subtitle{font-size:12px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--mono);}
+    .more{display:flex;gap:8px;align-items:center;flex:0 0 auto;}
+    .iconbtn{
+      width:38px;height:38px;border-radius:14px;
+      border:1px solid var(--stroke);
+      background:var(--card);
+      display:grid;place-items:center;
+      cursor:pointer;
+      transition:transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+    .iconbtn:hover{transform:translateY(-1px);background:var(--card2);border-color:var(--stroke2);}
+    .iconbtn:active{transform:translateY(0) scale(.99);}
+
+    .media{position:relative;background:rgba(0,0,0,0.20);aspect-ratio:4/3;overflow:hidden;}
+    .media img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.01);filter:saturate(1.05) contrast(1.04);}
+    .media:after{
+      content:"";position:absolute;inset:0;
+      background:radial-gradient(700px 320px at 50% 110%, rgba(0,0,0,0.55), transparent 60%),
+               linear-gradient(to bottom, rgba(0,0,0,0.12), transparent 45%);
+      pointer-events:none;
+    }
+    .badge{
+      position:absolute;left:14px;bottom:14px;z-index:2;
+      display:flex;gap:10px;align-items:center;
+      padding:10px 12px;border-radius:999px;
+      border:1px solid rgba(255,255,255,0.16);
+      background:rgba(0,0,0,0.30);
+      backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+      box-shadow:var(--shadow2);
+      max-width:calc(100% - 28px);
+    }
+    .badge .title{font-size:13px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .badge .year{font-size:12px;color:rgba(255,255,255,0.78);font-family:var(--mono);white-space:nowrap;}
+    @media (prefers-color-scheme: light){
+      .badge{background:rgba(255,255,255,0.66);border-color:rgba(17,24,39,0.14);}
+      .badge .year{color:rgba(17,24,39,0.62);}
+    }
+
+    .body{padding:14px;display:flex;flex-direction:column;gap:10px;}
+    .cta-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+    .actions-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+    .act{
+      display:flex;align-items:center;gap:8px;
+      padding:10px 12px;border-radius:999px;
+      border:1px solid var(--stroke);
+      background:var(--card);
+      color:var(--muted);
+      cursor:pointer;
+      transition:transform .15s ease, background .15s ease, border-color .15s ease, color .15s ease;
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .act:hover{transform:translateY(-1px);background:var(--card2);border-color:var(--stroke2);color:var(--text);}
+    .act.primary{
+      background:linear-gradient(180deg, rgba(25,195,125,0.20), rgba(25,195,125,0.10));
+      border-color:rgba(25,195,125,0.35);
+      color:var(--text);
+    }
+    .act.primary:hover{background:linear-gradient(180deg, rgba(25,195,125,0.26), rgba(25,195,125,0.14));border-color:rgba(25,195,125,0.50);}
+    .desc{margin:0;color:var(--muted);font-size:13px;line-height:1.5;}
+    .desc b{color:var(--text);font-weight:650;}
+    .tags{display:flex;flex-wrap:wrap;gap:8px;}
+    .skeleton{
+      position:relative;overflow:hidden;
+      background:rgba(255,255,255,0.04);
+      border:1px solid var(--stroke);
+      border-radius:var(--radius2);
+      height:420px;
+      box-shadow:var(--shadow2);
+    }
+    .skeleton:before{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
+      transform:translateX(-100%);
+      animation:shimmer 1.2s infinite;
+    }
+    @keyframes shimmer{to{transform:translateX(100%);}}
+
+    /* Modal (details + add work share the same frame style) */
+    .modal{
+      position:fixed;inset:0;z-index:50;
+      display:none;place-items:center;padding:20px;
+      background:rgba(0,0,0,0.55);
+      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    }
+    .modal.open{display:grid;}
+    .dialog{
+      width:min(1020px, 96vw);
+      max-height:min(86vh, 900px);
+      overflow:hidden;
+      border-radius:28px;
+      border:1px solid var(--stroke2);
+      background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      box-shadow:0 24px 80px rgba(0,0,0,0.50);
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+    }
+    @media (max-width: 900px){.dialog{grid-template-columns:1fr;}}
+    .dialog .img{background:rgba(0,0,0,0.18);position:relative;min-height:320px;}
+    .dialog .img img{width:100%;height:100%;object-fit:cover;display:block;}
+    .dialog .side{
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      overflow:auto;
+    }
+    .close-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    .xbtn{
+      width:40px;height:40px;border-radius:14px;
+      border:1px solid var(--stroke);
+      background:var(--card);
+      cursor:pointer;
+      display:grid;place-items:center;
+    }
+    .xbtn:hover{border-color:var(--stroke2);background:var(--card2);}
+    .h1{margin:0;font-size:18px;letter-spacing:.2px;line-height:1.25;}
+    .byline{font-size:13px;color:var(--muted);}
+    .byline span{font-family:var(--mono);color:var(--faint);margin-left:8px;}
+    .facts{display:grid;gap:10px;grid-template-columns:1fr 1fr;}
+    .fact{
+      border:1px solid var(--stroke);
+      background:var(--card);
+      border-radius:18px;
+      padding:10px 12px;
+    }
+    .fact .k{font-size:11px;color:var(--faint);font-family:var(--mono);}
+    .fact .v{margin-top:6px;font-size:13px;color:var(--text);font-weight:650;}
+    .tiny{font-size:12px;color:var(--faint);line-height:1.45;}
+
+    /* Add Work form */
+    .form{
+      display:flex;flex-direction:column;gap:12px;
+    }
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    @media (max-width: 900px){.grid2{grid-template-columns:1fr;}}
+    .field{
+      display:flex;flex-direction:column;gap:6px;
+    }
+    .label{
+      font-size:11px;color:var(--faint);font-family:var(--mono);
+      letter-spacing:0.3px;text-transform:uppercase;
+    }
+    .control, .control select, .control textarea, .control input{
+      width:100%;
+    }
+    input[type="text"], input[type="number"], input[type="date"], input[type="url"], textarea, select{
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,0.04);
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 12px;
+      outline:none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+      font-size:13px;
+    }
+    textarea{min-height:90px;resize:vertical;}
+    input::placeholder, textarea::placeholder{color:var(--faint);}
+    select{appearance:none;}
+
+    .drop{
+      border:1px dashed rgba(255,255,255,0.18);
+      background:rgba(255,255,255,0.03);
+      border-radius:18px;
+      padding:12px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .drop .preview{
+      width:76px;height:76px;border-radius:18px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,0.14);
+      overflow:hidden;
+      flex:0 0 auto;
+      display:grid;place-items:center;
+      color:var(--faint);
+      font-family:var(--mono);
+      font-size:11px;
+    }
+    .drop .preview img{width:100%;height:100%;object-fit:cover;display:block;}
+    .drop .meta{
+      display:flex;flex-direction:column;gap:6px;min-width:0;
+    }
+    .drop .meta .hint{font-size:12px;color:var(--muted);line-height:1.35;}
+    .drop .meta .subhint{font-size:11px;color:var(--faint);font-family:var(--mono);}
+    .drop .btnrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px;}
+    .act.small{padding:8px 10px;border-radius:999px;font-size:12px;}
+    .error{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.04);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+    }
+
+    .footer{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:30px 18px 44px 18px;
+      color:var(--faint);
+      font-size:12px;
+      line-height:1.55;
+      display:flex;
+      justify-content:space-between;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+    .footer .left strong{color:var(--text);}
+    .footer code{
+      font-family:var(--mono);
+      background:rgba(255,255,255,0.06);
+      border:1px solid var(--stroke);
+      padding:2px 6px;
+      border-radius:8px;
+      color:var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand" role="banner" aria-label="The Collection">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <div class="brand-name">The Collection</div>
+          <div class="brand-sub">art • provenance • discovery</div>
+        </div>
+      </div>
+
+      <div class="search" role="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M10.5 18.5a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        <input id="q" type="text" placeholder="Search artists, titles, mediums…" autocomplete="off" />
+      </div>
+
+      <div class="actions">
+        <div class="pill accent" id="addWorkBtn" title="Add a work to your collection">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          Add Work
+        </div>
+        <div class="pill" id="refreshBtn" title="Refresh selection">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20 12a8 8 0 0 1-14.9 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M4 12A8 8 0 0 1 18.9 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M18.7 3.8v4.1h-4.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5.3 20.2v-4.1h4.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Refresh
+        </div>
+        <div class="pill" id="curateBtn" title="Curate">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 21s-7-4.4-9.3-9A5.6 5.6 0 0 1 12 5.6 5.6 5.6 0 0 1 21.3 12c-2.3 4.6-9.3 9-9.3 9Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+          </svg>
+          Curate
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <aside class="rail">
+      <section class="panel">
+        <div class="hd">
+          <h3>Curator’s Desk</h3>
+          <div class="tag ac" title="Live from The Met API">LIVE</div>
+        </div>
+        <div class="bd">
+          <div class="statline">
+            <div class="chip">
+              <div class="k">FEED</div>
+              <div class="v"><span id="countLive">—</span> <small>works</small></div>
+            </div>
+            <div class="chip">
+              <div class="k">YOUR WORKS</div>
+              <div class="v"><span id="countLocal">0</span> <small>added</small></div>
+            </div>
+            <div class="chip">
+              <div class="k">SOURCE</div>
+              <div class="v">The Met <small>Open Access</small></div>
+            </div>
+          </div>
+
+          <div class="filters">
+            <div class="seg" role="tablist" aria-label="Mode">
+              <button class="active" data-mode="feed" role="tab">Feed</button>
+              <button data-mode="grid" role="tab">Grid</button>
+            </div>
+
+            <div class="seg" role="tablist" aria-label="Curate">
+              <button class="active" data-curate="icons" role="tab">Iconic</button>
+              <button data-curate="painting" role="tab">Painting</button>
+              <button data-curate="photo" role="tab">Photography</button>
+            </div>
+          </div>
+
+          <p class="note">
+            “Add Work” is a local-only form for now. Works you add are saved in this browser (localStorage).
+          </p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="hd">
+          <h3>Stories</h3>
+          <div class="tag">tap to open</div>
+        </div>
+        <div class="stories" id="stories"></div>
+      </section>
+
+      <section class="panel">
+        <div class="hd">
+          <h3>Collection Notes</h3>
+          <div class="tag">prototype</div>
+        </div>
+        <div class="bd">
+          <div class="tiny">
+            You can add a collected piece with details like provenance, location, insurance, and condition.
+            For now, it stays private in your browser.
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <section class="feed" id="feed">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="left">
+      <strong>The Collection</strong> • frontend prototype<br/>
+      Live data: <code>collectionapi.metmuseum.org</code> (no auth).
+    </div>
+    <div class="right">
+      Add Work is local-only: image stored as a data URL in your browser.
+    </div>
+  </footer>
+
+  <!-- Details Modal -->
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-label="Artwork details">
+    <div class="dialog">
+      <div class="img"><img id="modalImg" alt="" /></div>
+      <div class="side">
+        <div class="close-row">
+          <div class="tag ac" id="modalDept">—</div>
+          <button class="xbtn" id="closeModal" aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <h2 class="h1" id="modalTitle">—</h2>
+        <div class="byline" id="modalByline">— <span id="modalYear">—</span></div>
+
+        <div class="facts">
+          <div class="fact"><div class="k">MEDIUM</div><div class="v" id="modalMedium">—</div></div>
+          <div class="fact"><div class="k">CULTURE</div><div class="v" id="modalCulture">—</div></div>
+          <div class="fact"><div class="k">PERIOD</div><div class="v" id="modalPeriod">—</div></div>
+          <div class="fact"><div class="k">DIMENSIONS</div><div class="v" id="modalDims">—</div></div>
+        </div>
+
+        <div class="cta-row">
+          <div class="actions-row">
+            <button class="act primary" id="saveBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 3h12a2 2 0 0 1 2 2v16l-8-4-8 4V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+              </svg>
+              Save
+            </button>
+            <button class="act" id="shareBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 16V4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                <path d="M7 9l5-5 5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 20h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+              Share
+            </button>
+            <a class="act" id="metLink" href="#" target="_blank" rel="noreferrer">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M14 3h7v7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                <path d="M10 14 21 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                <path d="M21 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+              View at The Met
+            </a>
+          </div>
+        </div>
+
+        <p class="tiny" id="modalNote">—</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Work Modal -->
+  <div class="modal" id="addModal" aria-hidden="true" role="dialog" aria-label="Add a work">
+    <div class="dialog">
+      <div class="img" style="display:flex; flex-direction:column; gap:12px; padding:14px;">
+        <div class="tag ac">ADD WORK</div>
+        <div class="drop" id="dropZone">
+          <div class="preview" id="uploadPreview">No image</div>
+          <div class="meta">
+            <div class="hint"><b>Upload a photo</b> of the piece (front view, ideally). You can also drag and drop here.</div>
+            <div class="subhint">JPG/PNG/WebP. Stored locally in your browser for this prototype.</div>
+            <div class="btnrow">
+              <button class="act small primary" id="pickFileBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 16V4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                  <path d="M7 9l5-5 5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M4 20h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                </svg>
+                Choose Image
+              </button>
+              <button class="act small" id="clearImageBtn">Clear</button>
+              <input id="fileInput" type="file" accept="image/*" style="display:none;" />
+            </div>
+          </div>
+        </div>
+
+        <div class="error" id="addError" style="display:none;"></div>
+
+        <div class="tiny">
+          Pro tip: add provenance + condition now. It’s the kind of detail collectors always wish they captured earlier.
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="close-row">
+          <h2 class="h1" style="margin:0;">New Collected Work</h2>
+          <button class="xbtn" id="closeAddModal" aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <form class="form" id="addForm">
+          <div class="grid2">
+            <div class="field">
+              <div class="label">Title</div>
+              <div class="control"><input id="fTitle" type="text" placeholder="e.g., Untitled (Blue)" required /></div>
+            </div>
+            <div class="field">
+              <div class="label">Artist</div>
+              <div class="control"><input id="fArtist" type="text" placeholder="e.g., Glenn Ligon" required /></div>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <div class="label">Year</div>
+              <div class="control"><input id="fYear" type="text" placeholder="e.g., 2019" /></div>
+            </div>
+            <div class="field">
+              <div class="label">Medium</div>
+              <div class="control"><input id="fMedium" type="text" placeholder="e.g., Oil on canvas" /></div>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <div class="label">Dimensions</div>
+              <div class="control"><input id="fDims" type="text" placeholder='e.g., 60 × 48 in (152.4 × 121.9 cm)' /></div>
+            </div>
+            <div class="field">
+              <div class="label">Edition</div>
+              <div class="control"><input id="fEdition" type="text" placeholder="e.g., 3/25 + 2AP" /></div>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <div class="label">Tags</div>
+              <div class="control"><input id="fTags" type="text" placeholder="comma-separated: abstract, blue-chip, photo…" /></div>
+            </div>
+            <div class="field">
+              <div class="label">Category</div>
+              <div class="control">
+                <select id="fCategory">
+                  <option value="Painting">Painting</option>
+                  <option value="Sculpture">Sculpture</option>
+                  <option value="Photography">Photography</option>
+                  <option value="Print">Print</option>
+                  <option value="Drawing">Drawing</option>
+                  <option value="Mixed Media">Mixed Media</option>
+                  <option value="Design">Design</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <div class="label">Acquired Date</div>
+              <div class="control"><input id="fAcqDate" type="date" /></div>
+            </div>
+            <div class="field">
+              <div class="label">Acquired From</div>
+              <div class="control"><input id="fAcqFrom" type="text" placeholder="Gallery / Dealer / Auction house" /></div>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <div class="label">Purchase Price</div>
+              <div class="control"><input id="fPrice" type="text" placeholder="e.g., $75,000" /></div>
+            </div>
+            <div class="field">
+              <div class="label">Currency</div>
+              <div class="control">
+                <select id="fCurrency">
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                  <option value="CHF">CHF</option>
+                  <option value="HKD">HKD</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <div class="label">Location</div>
+              <div class="control"><input id="fLocation" type="text" placeholder="e.g., New York apartment, Living room wall" /></div>
+            </div>
+            <div class="field">
+              <div class="label">Condition</div>
+              <div class="control"><input id="fCondition" type="text" placeholder="e.g., Excellent; minor frame wear" /></div>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <div class="label">Insurance Value</div>
+              <div class="control"><input id="fInsValue" type="text" placeholder="e.g., $120,000" /></div>
+            </div>
+            <div class="field">
+              <div class="label">Certificate / Doc URL</div>
+              <div class="control"><input id="fDocUrl" type="url" placeholder="Optional link to docs (private later)" /></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="label">Provenance</div>
+            <div class="control"><textarea id="fProv" placeholder="e.g., Acquired from Gallery X; previously in Collection Y; exhibited at…"></textarea></div>
+          </div>
+
+          <div class="field">
+            <div class="label">Notes</div>
+            <div class="control"><textarea id="fNotes" placeholder="Anything you want to remember: framing details, install notes, shipping, etc."></textarea></div>
+          </div>
+
+          <div class="cta-row">
+            <div class="actions-row">
+              <button class="act primary" type="submit">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Add to Collection
+              </button>
+              <button class="act" type="button" id="cancelAddBtn">Cancel</button>
+            </div>
+            <div class="tag">stored locally</div>
+          </div>
+
+          <div class="tiny">
+            This doesn’t replace your existing feed. It adds your work as a first-class post at the top.
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = "https://collectionapi.metmuseum.org/public/collection/v1";
+
+    const el = (id) => document.getElementById(id);
+
+    const feedEl = el("feed");
+    const storiesEl = el("stories");
+    const qEl = el("q");
+    const countLiveEl = el("countLive");
+    const countLocalEl = el("countLocal");
+
+    const refreshBtn = el("refreshBtn");
+    const curateBtn = el("curateBtn");
+
+    const modal = el("modal");
+    const closeModal = el("closeModal");
+
+    const addWorkBtn = el("addWorkBtn");
+    const addModal = el("addModal");
+    const closeAddModal = el("closeAddModal");
+    const cancelAddBtn = el("cancelAddBtn");
+    const addForm = el("addForm");
+    const addError = el("addError");
+
+    const fileInput = el("fileInput");
+    const pickFileBtn = el("pickFileBtn");
+    const clearImageBtn = el("clearImageBtn");
+    const dropZone = el("dropZone");
+    const uploadPreview = el("uploadPreview");
+
+    // details modal fields
+    const modalImg = el("modalImg");
+    const modalTitle = el("modalTitle");
+    const modalByline = el("modalByline");
+    const modalYear = el("modalYear");
+    const modalDept = el("modalDept");
+    const modalMedium = el("modalMedium");
+    const modalCulture = el("modalCulture");
+    const modalPeriod = el("modalPeriod");
+    const modalDims = el("modalDims");
+    const modalNote = el("modalNote");
+    const metLink = el("metLink");
+    const saveBtn = el("saveBtn");
+    const shareBtn = el("shareBtn");
+
+    // form inputs
+    const fTitle = el("fTitle");
+    const fArtist = el("fArtist");
+    const fYear = el("fYear");
+    const fMedium = el("fMedium");
+    const fDims = el("fDims");
+    const fEdition = el("fEdition");
+    const fTags = el("fTags");
+    const fCategory = el("fCategory");
+    const fAcqDate = el("fAcqDate");
+    const fAcqFrom = el("fAcqFrom");
+    const fPrice = el("fPrice");
+    const fCurrency = el("fCurrency");
+    const fLocation = el("fLocation");
+    const fCondition = el("fCondition");
+    const fInsValue = el("fInsValue");
+    const fDocUrl = el("fDocUrl");
+    const fProv = el("fProv");
+    const fNotes = el("fNotes");
+
+    let mode = "feed";
+    let curate = "icons";
+    let allItems = [];               // met items (current selection)
+    let localWorks = loadLocalWorks(); // user-added works
+    let saved = new Set(JSON.parse(localStorage.getItem("thecollection_saved") || "[]"));
+    let uploadedDataUrl = "";        // image for add form (data URL)
+
+    function loadLocalWorks(){
+      try{
+        const raw = localStorage.getItem("thecollection_localworks");
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      }catch(_e){
+        return [];
+      }
+    }
+    function persistLocalWorks(){
+      localStorage.setItem("thecollection_localworks", JSON.stringify(localWorks));
+      countLocalEl.textContent = String(localWorks.length);
+    }
+    countLocalEl.textContent = String(localWorks.length);
+
+    function setSavedStorage(){
+      localStorage.setItem("thecollection_saved", JSON.stringify([...saved]));
+    }
+
+    function icon(name){
+      const icons = {
+        bookmark: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 3h12a2 2 0 0 1 2 2v16l-8-4-8 4V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        </svg>`,
+        spark: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2l1.2 5.1L18 9l-4.8 1.9L12 16l-1.2-5.1L6 9l4.8-1.9L12 2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+          <path d="M19 14l.7 2.8L22 18l-2.3 1.2L19 22l-.7-2.8L16 18l2.3-1.2L19 14Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        </svg>`
+      };
+      return icons[name] || "";
+    }
+
+    function dotsIcon(){
+      return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M5 12h.01M12 12h.01M19 12h.01" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+      </svg>`;
+    }
+
+    function clean(s){ return (s || "").toString().trim() || "—"; }
+
+    function shortList(arr, n=3){
+      if (!Array.isArray(arr)) return [];
+      return arr.filter(Boolean).slice(0, n).map(t => t.term || t).filter(Boolean);
+    }
+
+    function pickQuery(){
+      if (curate === "photo") return { q: "photograph" };
+      if (curate === "painting") return { q: "painting" };
+      const options = ["portrait", "landscape", "still life", "mythology", "impressionism", "renaissance", "modern", "drawing"];
+      return { q: options[Math.floor(Math.random()*options.length)] };
+    }
+
+    async function fetchJSON(url){
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+
+    function shuffle(a){
+      const arr = [...a];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function setSegActive(segEl, valueAttr, value){
+      segEl.querySelectorAll("button").forEach(b => b.classList.toggle("active", b.getAttribute(valueAttr) === value));
+    }
+
+    function renderSkeleton(){
+      feedEl.innerHTML = `<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>`;
+    }
+
+    function renderStories(items){
+      const top = items.slice(0, 10);
+      storiesEl.innerHTML = top.map(it => `
+        <div class="story" data-id="${it.__id}" data-kind="${it.__kind}" title="Open details">
+          <div class="ring">
+            <div class="thumb">
+              <img loading="lazy" src="${it.primaryImageSmall}" alt="${escapeHtml(it.title)} by ${escapeHtml(it.artistDisplayName || "Unknown")}" />
+            </div>
+          </div>
+          <div class="label">${escapeHtml(it.artistDisplayName || it.culture || "Unknown")}</div>
+        </div>
+      `).join("");
+
+      storiesEl.querySelectorAll(".story").forEach(node => {
+        node.addEventListener("click", () => {
+          const id = node.getAttribute("data-id");
+          const kind = node.getAttribute("data-kind");
+          const item = findItemById(kind, id);
+          if (item) openDetails(item);
+        });
+      });
+    }
+
+    function findItemById(kind, id){
+      if (kind === "local") return localWorks.find(x => String(x.__id) === String(id));
+      return allItems.find(x => String(x.__id) === String(id));
+    }
+
+    function buildOneLiner(it){
+      const parts = [];
+      if (it.medium) parts.push(it.medium);
+      if (it.culture) parts.push(it.culture);
+      if (it.period) parts.push(it.period);
+      const p = parts.filter(Boolean).slice(0,3).join(" • ");
+      return p ? `${p}.` : "A strong piece with collector energy.";
+    }
+
+    function curatorNote(it){
+      const pick = [
+        "Unusually calm composition, but the details keep pulling you in.",
+        "The kind of work that anchors a room without shouting.",
+        "There’s a quiet confidence here. Strong collector taste.",
+        "Feels like a piece you’d build a wall around.",
+        "A great example of how restraint can be the whole point."
+      ];
+      if ((it.medium || "").toLowerCase().includes("photograph")) return "Photographic, but still sculptural in its presence. A smart wall moment.";
+      return pick[Math.floor(Math.random()*pick.length)];
+    }
+
+    function toast(msg){
+      const t = document.createElement("div");
+      t.textContent = msg;
+      t.style.position = "fixed";
+      t.style.left = "50%";
+      t.style.bottom = "26px";
+      t.style.transform = "translateX(-50%)";
+      t.style.padding = "12px 14px";
+      t.style.borderRadius = "999px";
+      t.style.border = "1px solid rgba(255,255,255,0.16)";
+      t.style.background = "rgba(0,0,0,0.35)";
+      t.style.backdropFilter = "blur(12px)";
+      t.style.webkitBackdropFilter = "blur(12px)";
+      t.style.boxShadow = "0 18px 50px rgba(0,0,0,0.45)";
+      t.style.color = "rgba(255,255,255,0.92)";
+      t.style.fontSize = "12px";
+      t.style.maxWidth = "min(680px, 92vw)";
+      t.style.whiteSpace = "nowrap";
+      t.style.overflow = "hidden";
+      t.style.textOverflow = "ellipsis";
+      t.style.zIndex = "80";
+      document.body.appendChild(t);
+      setTimeout(()=>{ t.style.opacity = "0"; t.style.transition = "opacity 180ms ease"; }, 1800);
+      setTimeout(()=>{ t.remove(); }, 2100);
+    }
+
+    function toggleSave(item, btn){
+      const key = String(item.__id);
+      if (saved.has(key)) saved.delete(key);
+      else saved.add(key);
+      setSavedStorage();
+      btn.classList.toggle("primary", saved.has(key));
+      btn.innerHTML = `${icon("bookmark")} ${saved.has(key) ? "Saved" : "Save"}`;
+      toast(saved.has(key) ? "Saved to your collection." : "Removed from saved.");
+    }
+
+    async function shareItem(item){
+      const url = item.objectURL || "";
+      const title = item.title || "Artwork";
+      const artist = item.artistDisplayName || "Unknown";
+      const text = `${title} — ${artist}`;
+      try{
+        if (navigator.share){
+          await navigator.share({ title: "The Collection", text, url });
+        }else{
+          await navigator.clipboard.writeText(url || text);
+          toast(url ? "Link copied." : "Copied.");
+        }
+      }catch(_e){
+        toast("Couldn’t share here, but the idea is wired.");
+      }
+    }
+
+    function renderFeed(items){
+      countLiveEl.textContent = String(items.filter(x => x.__kind === "met").length);
+
+      if (mode === "grid"){
+        feedEl.innerHTML = `
+          <div class="card" style="padding:14px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="tag ac">GRID</div>
+                <div style="color:var(--muted); font-size:13px;">Your works appear first.</div>
+              </div>
+              <button class="act" id="backToFeed">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M10 19 3 12l7-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M3 12h18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                </svg>
+                Back to feed
+              </button>
+            </div>
+            <div style="margin-top:14px; display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
+              ${items.map(it => `
+                <a href="#" class="gridItem" data-id="${it.__id}" data-kind="${it.__kind}" style="
+                  position:relative; border-radius:18px; overflow:hidden; border:1px solid var(--stroke);
+                  background:rgba(0,0,0,0.18); aspect-ratio:1/1; display:block;">
+                  <img loading="lazy" src="${it.primaryImageSmall}" alt="${escapeHtml(it.title)}" style="width:100%; height:100%; object-fit:cover; display:block; filter:saturate(1.05) contrast(1.03);" />
+                  <div style="
+                    position:absolute; inset:auto 10px 10px 10px;
+                    padding:10px 10px; border-radius:16px;
+                    background:rgba(0,0,0,0.30);
+                    border:1px solid rgba(255,255,255,0.14);
+                    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+                    color:rgba(255,255,255,0.92);
+                    font-size:12px;
+                    box-shadow: var(--shadow2);
+                    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+                  ">
+                    ${escapeHtml(it.title || "Untitled")}
+                  </div>
+                </a>
+              `).join("")}
+            </div>
+          </div>
+        `;
+
+        el("backToFeed")?.addEventListener("click", (e) => {
+          e.preventDefault();
+          mode = "feed";
+          document.querySelectorAll('[data-mode]').forEach(b => b.classList.toggle("active", b.dataset.mode === mode));
+          applySearch();
+        });
+
+        feedEl.querySelectorAll(".gridItem").forEach(a => {
+          a.addEventListener("click", (e) => {
+            e.preventDefault();
+            const id = a.getAttribute("data-id");
+            const kind = a.getAttribute("data-kind");
+            const item = findItemById(kind, id);
+            if (item) openDetails(item);
+          });
+        });
+        return;
+      }
+
+      feedEl.innerHTML = items.map(it => renderCard(it)).join("");
+
+      feedEl.querySelectorAll(".card").forEach(card => {
+        const id = card.getAttribute("data-id");
+        const kind = card.getAttribute("data-kind");
+        const item = findItemById(kind, id);
+
+        const media = card.querySelector(".media");
+        media?.addEventListener("click", () => item && openDetails(item));
+        media?.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); item && openDetails(item); }
+        });
+
+        card.querySelectorAll("[data-action]").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const action = btn.getAttribute("data-action");
+            if (!item) return;
+
+            if (action === "save") toggleSave(item, btn);
+            if (action === "share") shareItem(item);
+            if (action === "open") openDetails(item);
+            if (action === "spark") toast(`Curator note: ${curatorNote(item)}`);
+            if (action === "delete" && kind === "local") deleteLocal(item.__id);
+          });
+        });
+      });
+    }
+
+    function renderCard(it){
+      const isLocal = it.__kind === "local";
+      const artist = clean(it.artistDisplayName) !== "—" ? it.artistDisplayName : (it.culture || "Unknown");
+      const sub = isLocal
+        ? [it.category, it.location ? `📍 ${it.location}` : ""].filter(Boolean).join(" • ")
+        : [it.objectName, it.department].filter(Boolean).join(" • ") || "—";
+      const year = it.objectDate || it.accessionYear || it.year || "—";
+
+      const tags = [
+        isLocal ? "Your Collection" : it.department,
+        it.culture,
+        it.period,
+        it.medium && (it.medium.length > 26 ? it.medium.slice(0, 26) + "…" : it.medium),
+        ...(isLocal ? (it.tags || []) : shortList(it.tags, 2))
+      ].filter(Boolean).slice(0, 5);
+
+      const isSaved = saved.has(String(it.__id));
+
+      return `
+        <article class="card" data-id="${it.__id}" data-kind="${it.__kind}">
+          <div class="meta">
+            <div class="who">
+              <div class="avatar" aria-hidden="true"></div>
+              <div class="names">
+                <div class="artist">${escapeHtml(artist)}</div>
+                <div class="subtitle">${escapeHtml(sub)}</div>
+              </div>
+            </div>
+            <div class="more">
+              <button class="iconbtn" data-action="spark" title="Curator note">${icon("spark")}</button>
+              <button class="iconbtn" data-action="open" title="Open">${dotsIcon()}</button>
+            </div>
+          </div>
+
+          <div class="media" role="button" tabindex="0" aria-label="Open artwork">
+            <img loading="lazy" src="${it.primaryImageSmall}" alt="${escapeHtml(it.title)}" />
+            <div class="badge">
+              <div class="title">${escapeHtml(it.title || "Untitled")}</div>
+              <div class="year">${escapeHtml(String(year))}</div>
+            </div>
+          </div>
+
+          <div class="body">
+            <div class="cta-row">
+              <div class="actions-row">
+                <button class="act ${isSaved ? "primary" : ""}" data-action="save">
+                  ${icon("bookmark")}
+                  ${isSaved ? "Saved" : "Save"}
+                </button>
+                <button class="act" data-action="share">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 16V4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                    <path d="M7 9l5-5 5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M4 20h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                  </svg>
+                  Share
+                </button>
+
+                ${
+                  isLocal
+                    ? `<button class="act" data-action="delete" title="Remove this local work">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M4 7h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                          <path d="M10 11v7M14 11v7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                          <path d="M6 7l1 14h10l1-14" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                          <path d="M9 7V4h6v3" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                        </svg>
+                        Remove
+                      </button>`
+                    : `<a class="act" href="${escapeAttr(it.objectURL || "#")}" target="_blank" rel="noreferrer">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M14 3h7v7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                          <path d="M10 14 21 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                          <path d="M21 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                        </svg>
+                        The Met
+                      </a>`
+                }
+              </div>
+              <div class="tag ac" title="Prototype: taste score">${isLocal ? "★ Your Work" : "▲ High signal"}</div>
+            </div>
+
+            <p class="desc">
+              <b>${escapeHtml(it.title || "Untitled")}</b> by <b>${escapeHtml(clean(it.artistDisplayName) !== "—" ? it.artistDisplayName : "Unknown")}</b>.
+              ${escapeHtml(buildOneLiner(it))}
+            </p>
+
+            <div class="tags">
+              ${tags.map((t,i) => `<span class="tag ${i===0 ? "ac":""}">${escapeHtml(t)}</span>`).join("")}
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function openDetails(item){
+      // If local work, show a tailored modal (still uses same modal)
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+
+      modalImg.src = item.primaryImage || item.primaryImageSmall;
+      modalImg.alt = `${item.title || "Untitled"} by ${item.artistDisplayName || "Unknown"}`;
+
+      const isLocal = item.__kind === "local";
+
+      modalDept.textContent = isLocal ? "Your Collection" : clean(item.department);
+      modalTitle.textContent = clean(item.title);
+
+      const artist = clean(item.artistDisplayName) !== "—" ? item.artistDisplayName : "Unknown";
+      modalByline.textContent = artist;
+
+      modalYear.textContent = clean(item.objectDate || item.accessionYear || item.year);
+
+      modalMedium.textContent = clean(item.medium);
+      modalCulture.textContent = clean(item.culture || (isLocal ? item.category : ""));
+      modalPeriod.textContent = clean(item.period || item.dynasty || (isLocal ? (item.acquiredDate ? "Acquired " + item.acquiredDate : "—") : ""));
+      modalDims.textContent = clean(item.dimensions);
+
+      metLink.href = isLocal ? (item.docUrl || "#") : (item.objectURL || "#");
+      metLink.textContent = isLocal ? (item.docUrl ? "Open Document" : "No Document") : "View at The Met";
+      metLink.style.pointerEvents = (metLink.href === "#" ? "none" : "auto");
+      metLink.style.opacity = (metLink.href === "#" ? "0.6" : "1");
+
+      const s = saved.has(String(item.__id));
+      saveBtn.textContent = s ? "Saved" : "Save";
+      saveBtn.classList.toggle("primary", s);
+
+      const noteBits = [];
+      if (!isLocal){
+        if (item.creditLine) noteBits.push(item.creditLine);
+        if (item.repository) noteBits.push(item.repository);
+        if (item.city || item.country) noteBits.push([item.city, item.country].filter(Boolean).join(", "));
+        modalNote.textContent = noteBits.filter(Boolean).slice(0,3).join(" • ") || "A high-end prototype detail view.";
+      }else{
+        const n = [];
+        if (item.acquiredFrom) n.push(`From: ${item.acquiredFrom}`);
+        if (item.purchasePrice) n.push(`Price: ${item.purchasePrice} ${item.currency || ""}`.trim());
+        if (item.insuranceValue) n.push(`Insured: ${item.insuranceValue}`);
+        if (item.condition) n.push(`Condition: ${item.condition}`);
+        modalNote.textContent = n.join(" • ") || (item.notes || "Your locally saved work.");
+      }
+
+      saveBtn.onclick = () => {
+        const key = String(item.__id);
+        if (saved.has(key)) saved.delete(key); else saved.add(key);
+        setSavedStorage();
+        const now = saved.has(key);
+        saveBtn.textContent = now ? "Saved" : "Save";
+        saveBtn.classList.toggle("primary", now);
+        toast(now ? "Saved to your collection." : "Removed from saved.");
+        const cardBtn = document.querySelector(`.card[data-id="${cssEscape(item.__id)}"] [data-action="save"]`);
+        if (cardBtn) {
+          cardBtn.classList.toggle("primary", now);
+          cardBtn.innerHTML = `${icon("bookmark")} ${now ? "Saved" : "Save"}`;
+        }
+      };
+      shareBtn.onclick = () => shareItem(item);
+    }
+
+    function closeIt(){
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+      modalImg.src = "";
+    }
+    closeModal.addEventListener("click", closeIt);
+    modal.addEventListener("click", (e) => { if (e.target === modal) closeIt(); });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape"){
+        if (modal.classList.contains("open")) closeIt();
+        if (addModal.classList.contains("open")) closeAddWork();
+      }
+    });
+
+    function escapeHtml(str){
+      return String(str ?? "").replace(/[&<>"']/g, (m)=>({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[m]));
+    }
+    function cssEscape(val){
+      // minimal escape for querySelector attr usage
+      return String(val).replace(/"/g, '\\"');
+    }
+
+    function applySearch(){
+      const term = qEl.value.trim().toLowerCase();
+
+      // Combine: local works first, then met works
+      const combined = [
+        ...localWorks.map(w => w),
+        ...allItems.map(m => m)
+      ];
+
+      if (!term){
+        renderStories(combined);
+        renderFeed(combined);
+        return;
+      }
+
+      const filtered = combined.filter(it => {
+        const hay = [
+          it.title, it.artistDisplayName, it.medium, it.department, it.culture, it.period,
+          it.category, it.location, it.acquiredFrom,
+          (it.tags || []).join(" "),
+          it.dimensions, it.notes, it.provenance
+        ].filter(Boolean).join(" ").toLowerCase();
+        return hay.includes(term);
+      });
+
+      renderStories(filtered);
+      renderFeed(filtered);
+    }
+
+    document.querySelectorAll("[data-mode]").forEach(b => {
+      b.addEventListener("click", () => {
+        mode = b.dataset.mode;
+        setSegActive(b.parentElement, "data-mode", mode);
+        applySearch();
+      });
+    });
+    document.querySelectorAll("[data-curate]").forEach(b => {
+      b.addEventListener("click", () => {
+        curate = b.dataset.curate;
+        setSegActive(b.parentElement, "data-curate", curate);
+        loadMet();
+      });
+    });
+
+    qEl.addEventListener("input", () => applySearch());
+
+    refreshBtn.addEventListener("click", () => loadMet());
+    curateBtn.addEventListener("click", () => { toast("Curating a fresh pull from The Met…"); loadMet(); });
+
+    /* Add Work modal open/close */
+    addWorkBtn.addEventListener("click", openAddWork);
+    closeAddModal.addEventListener("click", closeAddWork);
+    cancelAddBtn.addEventListener("click", closeAddWork);
+    addModal.addEventListener("click", (e) => { if (e.target === addModal) closeAddWork(); });
+
+    function openAddWork(){
+      addModal.classList.add("open");
+      addModal.setAttribute("aria-hidden", "false");
+      addError.style.display = "none";
+      // soft defaults
+      fCurrency.value = "USD";
+      fCategory.value = "Painting";
+    }
+    function closeAddWork(){
+      addModal.classList.remove("open");
+      addModal.setAttribute("aria-hidden", "true");
+      resetAddForm();
+    }
+
+    function showAddError(msg){
+      addError.textContent = msg;
+      addError.style.display = "block";
+    }
+    function resetAddForm(){
+      addForm.reset();
+      uploadedDataUrl = "";
+      uploadPreview.textContent = "No image";
+      uploadPreview.innerHTML = "No image";
+      addError.style.display = "none";
+    }
+
+    /* Image upload: click + drag/drop */
+    pickFileBtn.addEventListener("click", () => fileInput.click());
+    clearImageBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      uploadedDataUrl = "";
+      fileInput.value = "";
+      uploadPreview.innerHTML = "No image";
+      toast("Image cleared.");
+    });
+
+    fileInput.addEventListener("change", async () => {
+      const file = fileInput.files && fileInput.files[0];
+      if (!file) return;
+      await handleFile(file);
+    });
+
+    ;["dragenter","dragover"].forEach(evt => {
+      dropZone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.style.borderColor = "rgba(25,195,125,0.55)";
+        dropZone.style.background = "rgba(25,195,125,0.08)";
+      });
+    });
+    ;["dragleave","drop"].forEach(evt => {
+      dropZone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.style.borderColor = "";
+        dropZone.style.background = "";
+      });
+    });
+    dropZone.addEventListener("drop", async (e) => {
+      const file = e.dataTransfer.files && e.dataTransfer.files[0];
+      if (!file) return;
+      await handleFile(file);
+    });
+
+    async function handleFile(file){
+      const ok = /image\/(png|jpeg|jpg|webp|gif)/i.test(file.type) || file.type.startsWith("image/");
+      if (!ok) { showAddError("Please upload an image file (JPG/PNG/WebP)."); return; }
+      // Guard: data URLs can get huge; keep it lightweight for a prototype
+      const maxMB = 6;
+      if (file.size > maxMB * 1024 * 1024){
+        showAddError(`That image is a bit large for a local-only prototype (>${maxMB}MB). Try a smaller file.`);
+        return;
+      }
+      uploadedDataUrl = await fileToDataUrl(file);
+      uploadPreview.innerHTML = `<img src="${uploadedDataUrl}" alt="Uploaded artwork preview" />`;
+      addError.style.display = "none";
+      toast("Image added.");
+    }
+
+    function fileToDataUrl(file){
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    addForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const title = fTitle.value.trim();
+      const artist = fArtist.value.trim();
+      if (!title || !artist){
+        showAddError("Please include at least a Title and Artist.");
+        return;
+      }
+      if (!uploadedDataUrl){
+        showAddError("Please upload a photo of the work (you can drag and drop it).");
+        return;
+      }
+
+      const tags = (fTags.value || "")
+        .split(",")
+        .map(t => t.trim())
+        .filter(Boolean)
+        .slice(0, 10);
+
+      const now = new Date();
+      const id = "local_" + now.getTime() + "_" + Math.floor(Math.random()*1000);
+
+      const work = {
+        __kind: "local",
+        __id: id,
+
+        title,
+        artistDisplayName: artist,
+        year: fYear.value.trim(),
+        medium: fMedium.value.trim(),
+        dimensions: fDims.value.trim(),
+        edition: fEdition.value.trim(),
+        category: fCategory.value,
+
+        tags,
+
+        acquiredDate: fAcqDate.value || "",
+        acquiredFrom: fAcqFrom.value.trim(),
+        purchasePrice: fPrice.value.trim(),
+        currency: fCurrency.value,
+        location: fLocation.value.trim(),
+        condition: fCondition.value.trim(),
+        insuranceValue: fInsValue.value.trim(),
+        docUrl: fDocUrl.value.trim(),
+
+        provenance: fProv.value.trim(),
+        notes: fNotes.value.trim(),
+
+        // images
+        primaryImage: uploadedDataUrl,
+        primaryImageSmall: uploadedDataUrl,
+
+        // share url could be added later; blank for now
+        objectURL: ""
+      };
+
+      localWorks.unshift(work);
+      persistLocalWorks();
+
+      closeAddWork();
+      toast("Added to your collection.");
+      applySearch();
+      // Scroll to top so you see it immediately
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    function deleteLocal(id){
+      const ok = confirm("Remove this work from your local collection? (This only affects this browser.)");
+      if (!ok) return;
+      localWorks = localWorks.filter(w => String(w.__id) !== String(id));
+      persistLocalWorks();
+      // also remove from saved if present
+      if (saved.has(String(id))) {
+        saved.delete(String(id));
+        setSavedStorage();
+      }
+      toast("Removed.");
+      applySearch();
+    }
+
+    async function loadMet(){
+      renderSkeleton();
+      try{
+        const { q } = pickQuery();
+        const searchUrl = `${API}/search?hasImages=true&q=${encodeURIComponent(q)}`;
+        const search = await fetchJSON(searchUrl);
+
+        const ids = shuffle((search.objectIDs || []).slice(0, 240));
+        const items = [];
+
+        for (let i = 0; i < ids.length && items.length < 20; i++){
+          const id = ids[i];
+          try{
+            const obj = await fetchJSON(`${API}/objects/${id}`);
+            const img = obj.primaryImageSmall || obj.primaryImage;
+            if (!img) continue;
+            obj.__kind = "met";
+            obj.__id = String(obj.objectID);
+            items.push(obj);
+          }catch(_e){}
+        }
+
+        allItems = items;
+        applySearch();
+      }catch(e){
+        feedEl.innerHTML = `
+          <div class="card" style="padding:18px;">
+            <div class="tag ac">Error</div>
+            <div style="margin-top:10px; color:var(--muted);">
+              Couldn’t load The Met API right now. Refresh the page to try again.
+            </div>
+            <div class="tiny" style="margin-top:10px;">${escapeHtml(String(e.message || e))}</div>
+          </div>
+        `;
+      }
+    }
+
+    // Details modal close on backdrop click
+    function closeDetailsOnBackdrop(){
+      if (modal.classList.contains("open")) closeIt();
+    }
+
+    // Initial load
+    loadMet();
+    persistLocalWorks(); // sets count
+
+    // Attach details modal backdrop handler
+    modal.addEventListener("click", (e) => { if (e.target === modal) closeDetailsOnBackdrop(); });
+  </script>
+</body>
+</html>
