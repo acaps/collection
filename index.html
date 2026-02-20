@@ -1,0 +1,1156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>The Collection</title>
+
+<style>
+:root{
+  --bg:#f7f7f8;
+  --paper:#ffffff;
+
+  --card:rgba(0,0,0,0.04);
+  --card2:rgba(0,0,0,0.06);
+  --stroke:rgba(0,0,0,0.10);
+  --stroke2:rgba(0,0,0,0.14);
+
+  --text:rgba(0,0,0,0.88);
+  --muted:rgba(0,0,0,0.65);
+  --faint:rgba(0,0,0,0.45);
+
+  --shadow:0 18px 45px rgba(0,0,0,0.08);
+  --shadow2:0 10px 28px rgba(0,0,0,0.06);
+
+  --radius:18px;
+  --radius2:26px;
+
+  --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Courier New",monospace;
+  --sans:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+}
+
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:
+    radial-gradient(900px 600px at 20% -10%, rgba(0,0,0,0.04), transparent 60%),
+    radial-gradient(700px 520px at 90% 8%, rgba(0,0,0,0.03), transparent 55%),
+    var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* iOS safe area */
+.safe-top{ padding-top: env(safe-area-inset-top); }
+.safe-bottom{ padding-bottom: env(safe-area-inset-bottom); }
+
+a{color:inherit;text-decoration:none;}
+button,input,textarea,select{font-family:inherit;}
+button{ -webkit-tap-highlight-color: transparent; }
+img{ -webkit-user-drag:none; user-select:none; }
+
+.app{
+  max-width: 420px;           /* phone frame */
+  margin: 0 auto;
+  min-height: 100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* Top bar */
+header{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255,255,255,0.90);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--stroke);
+}
+.top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 12px 14px;
+  gap: 10px;
+}
+.brand{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  min-width: 0;
+}
+.brand-mark{
+  width:32px;height:32px;border-radius:12px;
+  border:1px solid var(--stroke2);
+  background:
+    radial-gradient(12px 12px at 30% 30%, rgba(0,0,0,0.12), transparent 60%),
+    radial-gradient(18px 18px at 70% 70%, rgba(0,0,0,0.10), transparent 60%),
+    linear-gradient(135deg, rgba(0,0,0,0.06), rgba(0,0,0,0.02));
+  box-shadow: var(--shadow2);
+  flex: 0 0 auto;
+}
+.brand-title{
+  font-weight: 750;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  font-size: 12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.brand-sub{
+  font-size: 11px;
+  color: var(--faint);
+  font-family: var(--mono);
+  margin-top: 2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.iconbtn{
+  width: 40px;
+  height: 40px;
+  border-radius: 16px;
+  border: 1px solid var(--stroke);
+  background: var(--card);
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+}
+.iconbtn:active{ transform: scale(.98); }
+.iconbtn svg{ opacity: .9; }
+
+.search{
+  padding: 10px 14px 12px;
+}
+.searchbox{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border: 1px solid var(--stroke);
+  background: rgba(255,255,255,0.70);
+  border-radius: 999px;
+  padding: 10px 12px;
+}
+.searchbox svg{ opacity: .55; }
+.searchbox input{
+  border:0;
+  outline:none;
+  background:transparent;
+  width:100%;
+  font-size: 14px;
+  color: var(--text);
+}
+.searchbox input::placeholder{ color: var(--faint); }
+
+/* Stories */
+.stories{
+  display:flex;
+  gap: 12px;
+  overflow:auto;
+  padding: 10px 14px 14px;
+  scrollbar-width: none;
+}
+.stories::-webkit-scrollbar{ display:none; }
+.story{
+  width: 72px;
+  flex: 0 0 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap: 8px;
+}
+.ring{
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  padding: 2px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.28), rgba(0,0,0,0.08));
+  border: 1px solid var(--stroke);
+}
+.thumb{
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  overflow:hidden;
+  background: var(--card);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.storylabel{
+  width: 72px;
+  font-size: 11px;
+  color: var(--muted);
+  text-align:center;
+  line-height: 1.15;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* Feed */
+main{
+  flex:1;
+  padding: 0 0 80px;
+}
+.feed{
+  display:flex;
+  flex-direction:column;
+  gap: 14px;
+  padding: 0 14px 18px;
+}
+
+.post{
+  background: var(--paper);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius2);
+  overflow:hidden;
+  box-shadow: var(--shadow2);
+}
+
+.posthead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  padding: 12px 12px 10px;
+}
+.who{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width:0;
+}
+.avatar{
+  width: 34px;
+  height: 34px;
+  border-radius: 14px;
+  border: 1px solid var(--stroke);
+  background:
+    radial-gradient(12px 12px at 30% 30%, rgba(0,0,0,0.12), transparent 60%),
+    linear-gradient(135deg, rgba(0,0,0,0.06), rgba(0,0,0,0.02));
+  flex: 0 0 auto;
+}
+.names{min-width:0;}
+.artist{
+  font-size: 13px;
+  font-weight: 650;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sub{
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--faint);
+  font-family: var(--mono);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.media{
+  position:relative;
+  background: rgba(0,0,0,0.04);
+  aspect-ratio: 4 / 5; /* phone-friendly */
+}
+.media img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.badge{
+  position:absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  background: rgba(255,255,255,0.86);
+  border: 1px solid rgba(0,0,0,0.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 18px;
+  padding: 10px 12px;
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap: 10px;
+}
+.badge .t{
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.badge .y{
+  font-size: 11px;
+  color: var(--faint);
+  font-family: var(--mono);
+  white-space:nowrap;
+}
+
+.body{
+  padding: 12px;
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+}
+.actions{
+  display:flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pill{
+  border: 1px solid var(--stroke);
+  background: var(--card);
+  padding: 9px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--text);
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  cursor:pointer;
+}
+.pill.primary{
+  background:#111;
+  color:#fff;
+  border-color:#111;
+}
+.pill:active{ transform: scale(.99); }
+
+.desc{
+  margin:0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.desc b{ color: var(--text); }
+
+.tags{
+  display:flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.tag{
+  font-size: 11px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: rgba(0,0,0,0.02);
+  color: var(--faint);
+  font-family: var(--mono);
+}
+
+/* Bottom nav */
+nav{
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: min(420px, 100%);
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--stroke);
+}
+.navrow{
+  display:flex;
+  justify-content:space-around;
+  padding: 10px 12px;
+}
+.navbtn{
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  display:grid;
+  place-items:center;
+  border: 1px solid transparent;
+  background: transparent;
+}
+.navbtn:active{ transform: scale(.98); }
+.navbtn.active{
+  border-color: var(--stroke);
+  background: var(--card);
+}
+
+/* Modal */
+.modal{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display:none;
+  align-items:flex-end; /* bottom sheet */
+  justify-content:center;
+  padding: 14px;
+  padding-bottom: calc(14px + env(safe-area-inset-bottom));
+  z-index: 50;
+}
+.modal.open{display:flex;}
+.sheet{
+  width: min(420px, 100%);
+  background: var(--paper);
+  border-radius: 28px;
+  border: 1px solid rgba(0,0,0,0.10);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+.sheethead{
+  padding: 12px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--stroke);
+}
+.sheethead .h{
+  font-weight: 700;
+  font-size: 14px;
+}
+.sheetbody{
+  padding: 14px;
+  max-height: 70vh;
+  overflow:auto;
+}
+.field label{
+  display:block;
+  font-size: 11px;
+  color: var(--faint);
+  font-family: var(--mono);
+  margin-bottom: 6px;
+}
+input, textarea, select{
+  width: 100%;
+  border: 1px solid var(--stroke);
+  background: rgba(0,0,0,0.02);
+  border-radius: 16px;
+  padding: 11px 12px;
+  font-size: 14px;
+  outline:none;
+}
+textarea{ min-height: 86px; resize: vertical; }
+.row{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 360px){
+  .row{ grid-template-columns: 1fr; }
+}
+.preview{
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 18px;
+  border: 1px dashed rgba(0,0,0,0.18);
+  background: rgba(0,0,0,0.02);
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.preview img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.sheetactions{
+  display:flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.sheetactions button{
+  flex: 1;
+  height: 44px;
+  border-radius: 16px;
+  font-size: 13px;
+}
+.err{
+  display:none;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: rgba(0,0,0,0.03);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.skel{
+  height: 520px;
+  border-radius: var(--radius2);
+  border:1px solid var(--stroke);
+  background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06), rgba(0,0,0,0.03));
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+@keyframes shimmer{ to{ background-position: -200% 0; } }
+</style>
+</head>
+
+<body>
+<div class="app safe-top safe-bottom">
+
+  <header>
+    <div class="top">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div style="min-width:0;">
+          <div class="brand-title">The Collection</div>
+          <div class="brand-sub">art • provenance • discovery</div>
+        </div>
+      </div>
+      <button class="iconbtn" id="addBtn" aria-label="Add Work" title="Add Work">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search">
+      <div class="searchbox">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M10.5 18.5a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        <input id="q" type="text" placeholder="Search titles, artists, mediums…" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="stories" id="stories"></div>
+  </header>
+
+  <main>
+    <div class="feed" id="feed">
+      <div class="skel"></div>
+      <div class="skel"></div>
+    </div>
+  </main>
+
+  <!-- Bottom nav -->
+  <nav class="safe-bottom" aria-label="Bottom navigation">
+    <div class="navrow">
+      <button class="navbtn active" id="navHome" aria-label="Home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="navbtn" id="navRefresh" aria-label="Refresh">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M20 12a8 8 0 0 1-14.9 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          <path d="M4 12A8 8 0 0 1 18.9 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          <path d="M18.7 3.8v4.1h-4.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5.3 20.2v-4.1h4.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="navbtn" id="navSaved" aria-label="Saved">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 3h12a2 2 0 0 1 2 2v16l-8-4-8 4V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="navbtn" id="navMe" aria-label="Me">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M20 21a8 8 0 1 0-16 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          <path d="M12 13a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="1.7"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Add Work Bottom Sheet -->
+  <div class="modal" id="addModal" aria-hidden="true" role="dialog" aria-label="Add a work">
+    <div class="sheet" role="document">
+      <div class="sheethead">
+        <div class="h">Add Work</div>
+        <button class="iconbtn" id="closeAdd" aria-label="Close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="sheetbody">
+        <div class="preview" id="preview">No image</div>
+        <input type="file" id="imageInput" accept="image/*" />
+
+        <div class="field">
+          <label>Title</label>
+          <input type="text" id="fTitle" placeholder="e.g., Untitled (Blue)" />
+        </div>
+
+        <div class="field">
+          <label>Artist</label>
+          <input type="text" id="fArtist" placeholder="e.g., Glenn Ligon" />
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Year</label>
+            <input type="text" id="fYear" placeholder="e.g., 2019" />
+          </div>
+          <div class="field">
+            <label>Medium</label>
+            <input type="text" id="fMedium" placeholder="e.g., Oil on canvas" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Dimensions</label>
+            <input type="text" id="fDims" placeholder='e.g., 60 × 48 in (152.4 × 121.9 cm)' />
+          </div>
+          <div class="field">
+            <label>Edition</label>
+            <input type="text" id="fEdition" placeholder="e.g., 3/25 + 2AP" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Category</label>
+            <select id="fCategory">
+              <option value="Painting">Painting</option>
+              <option value="Sculpture">Sculpture</option>
+              <option value="Photography">Photography</option>
+              <option value="Print">Print</option>
+              <option value="Drawing">Drawing</option>
+              <option value="Mixed Media">Mixed Media</option>
+              <option value="Design">Design</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tags</label>
+            <input type="text" id="fTags" placeholder="comma-separated" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Acquired Date</label>
+            <input type="date" id="fAcqDate" />
+          </div>
+          <div class="field">
+            <label>Acquired From</label>
+            <input type="text" id="fAcqFrom" placeholder="Gallery / Dealer / Auction house" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Purchase Price</label>
+            <input type="text" id="fPrice" placeholder="e.g., $75,000" />
+          </div>
+          <div class="field">
+            <label>Currency</label>
+            <select id="fCurrency">
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="CHF">CHF</option>
+              <option value="HKD">HKD</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Location</label>
+            <input type="text" id="fLocation" placeholder="e.g., Living room wall" />
+          </div>
+          <div class="field">
+            <label>Condition</label>
+            <input type="text" id="fCondition" placeholder="e.g., Excellent; minor frame wear" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Insurance Value</label>
+            <input type="text" id="fInsValue" placeholder="e.g., $120,000" />
+          </div>
+          <div class="field">
+            <label>Certificate / Doc URL</label>
+            <input type="url" id="fDocUrl" placeholder="Optional link" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Provenance</label>
+          <textarea id="fProv" placeholder="Chain of ownership, exhibition history, etc."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Notes</label>
+          <textarea id="fNotes" placeholder="Framing, install notes, shipping, etc."></textarea>
+        </div>
+
+        <div class="err" id="addErr"></div>
+
+        <div class="sheetactions">
+          <button class="primary" id="saveWork">Add to Collection</button>
+          <button id="cancelAdd">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = "https://collectionapi.metmuseum.org/public/collection/v1";
+
+const feedEl = document.getElementById("feed");
+const storiesEl = document.getElementById("stories");
+const qEl = document.getElementById("q");
+
+const addBtn = document.getElementById("addBtn");
+const addModal = document.getElementById("addModal");
+const closeAdd = document.getElementById("closeAdd");
+const cancelAdd = document.getElementById("cancelAdd");
+const saveWork = document.getElementById("saveWork");
+
+const imageInput = document.getElementById("imageInput");
+const preview = document.getElementById("preview");
+const addErr = document.getElementById("addErr");
+
+const navRefresh = document.getElementById("navRefresh");
+const navSaved = document.getElementById("navSaved");
+
+let metItems = [];
+let localWorks = safeParse(localStorage.getItem("thecollection_localworks"), []);
+let saved = new Set(safeParse(localStorage.getItem("thecollection_saved"), []));
+
+let imageData = "";
+
+function safeParse(str, fallback){
+  try{
+    const v = JSON.parse(str);
+    return v ?? fallback;
+  }catch(_e){
+    return fallback;
+  }
+}
+
+function persist(){
+  localStorage.setItem("thecollection_localworks", JSON.stringify(localWorks));
+  localStorage.setItem("thecollection_saved", JSON.stringify([...saved]));
+}
+
+function escapeHtml(str){
+  return String(str ?? "").replace(/[&<>"']/g, (m)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[m]));
+}
+
+function combinedList(){
+  // local first
+  return [
+    ...localWorks.map(w => ({...w, __kind:"local"})),
+    ...metItems.map(m => ({...m, __kind:"met"}))
+  ];
+}
+
+function renderStories(items){
+  const top = items.slice(0, 10);
+  storiesEl.innerHTML = top.map(it => `
+    <div class="story" data-kind="${it.__kind}" data-id="${it.__id}">
+      <div class="ring">
+        <div class="thumb">
+          <img loading="lazy" src="${it.primaryImageSmall}" alt="${escapeHtml(it.title)}" />
+        </div>
+      </div>
+      <div class="storylabel">${escapeHtml(it.artistDisplayName || "Unknown")}</div>
+    </div>
+  `).join("");
+
+  // tap story scrolls to that post
+  storiesEl.querySelectorAll(".story").forEach(node => {
+    node.addEventListener("click", () => {
+      const kind = node.getAttribute("data-kind");
+      const id = node.getAttribute("data-id");
+      const post = document.querySelector(`.post[data-kind="${kind}"][data-id="${CSS.escape(id)}"]`);
+      post?.scrollIntoView({behavior:"smooth", block:"start"});
+    });
+  });
+}
+
+function renderFeed(items){
+  feedEl.innerHTML = items.map(it => {
+    const year = it.objectDate || it.year || it.accessionYear || "—";
+    const isSaved = saved.has(String(it.__id));
+    const subtitle = it.__kind === "local"
+      ? [it.category || "Your Collection", it.location ? `📍 ${it.location}` : ""].filter(Boolean).join(" • ")
+      : [it.objectName, it.department].filter(Boolean).join(" • ");
+
+    const tags = [
+      it.__kind === "local" ? "Your Collection" : it.department,
+      it.culture,
+      it.period,
+      it.medium && (it.medium.length > 28 ? it.medium.slice(0, 28) + "…" : it.medium),
+      ...(it.__kind === "local" ? (it.tags || []) : [])
+    ].filter(Boolean).slice(0, 5);
+
+    return `
+      <article class="post" data-kind="${it.__kind}" data-id="${escapeHtml(it.__id)}">
+        <div class="posthead">
+          <div class="who">
+            <div class="avatar" aria-hidden="true"></div>
+            <div class="names">
+              <div class="artist">${escapeHtml(it.artistDisplayName || "Unknown")}</div>
+              <div class="sub">${escapeHtml(subtitle || "—")}</div>
+            </div>
+          </div>
+          <button class="iconbtn" data-action="save" data-id="${escapeHtml(it.__id)}" aria-label="Save">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6 3h12a2 2 0 0 1 2 2v16l-8-4-8 4V5a2 2 0 0 1 2-2Z"
+                stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="media">
+          <img loading="lazy" src="${it.primaryImageSmall}" alt="${escapeHtml(it.title || "Artwork")}" />
+          <div class="badge">
+            <div class="t">${escapeHtml(it.title || "Untitled")}</div>
+            <div class="y">${escapeHtml(String(year))}</div>
+          </div>
+        </div>
+
+        <div class="body">
+          <div class="actions">
+            <button class="pill ${isSaved ? "primary" : ""}" data-action="savepill" data-id="${escapeHtml(it.__id)}">
+              ${isSaved ? "Saved" : "Save"}
+            </button>
+            <button class="pill" data-action="share" data-id="${escapeHtml(it.__id)}">Share</button>
+            ${
+              it.__kind === "met"
+                ? `<a class="pill" href="${escapeHtml(it.objectURL || "#")}" target="_blank" rel="noreferrer">The Met</a>`
+                : `<button class="pill" data-action="remove" data-id="${escapeHtml(it.__id)}">Remove</button>`
+            }
+          </div>
+
+          <p class="desc">
+            <b>${escapeHtml(it.title || "Untitled")}</b> by <b>${escapeHtml(it.artistDisplayName || "Unknown")}</b>.
+            <span style="color:var(--faint);">
+              ${escapeHtml(oneLiner(it))}
+            </span>
+          </p>
+
+          <div class="tags">
+            ${tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  // wire actions
+  feedEl.querySelectorAll("[data-action]").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      const action = btn.getAttribute("data-action");
+      const id = btn.getAttribute("data-id");
+      const item = findById(id);
+      if (!item) return;
+
+      if (action === "save" || action === "savepill"){
+        toggleSaved(id);
+        applySearch();
+      } else if (action === "share"){
+        await shareItem(item);
+      } else if (action === "remove"){
+        removeLocal(id);
+      }
+    });
+  });
+}
+
+function oneLiner(it){
+  const parts = [];
+  if (it.medium) parts.push(it.medium);
+  if (it.culture) parts.push(it.culture);
+  if (it.period) parts.push(it.period);
+  return parts.filter(Boolean).slice(0,2).join(" • ") || "A strong piece with collector energy.";
+}
+
+function findById(id){
+  const loc = localWorks.find(w => String(w.__id) === String(id));
+  if (loc) return {...loc, __kind:"local"};
+  const met = metItems.find(m => String(m.__id) === String(id));
+  if (met) return {...met, __kind:"met"};
+  return null;
+}
+
+function toggleSaved(id){
+  const key = String(id);
+  if (saved.has(key)) saved.delete(key);
+  else saved.add(key);
+  persist();
+}
+
+async function shareItem(it){
+  const url = it.objectURL || "";
+  const text = `${it.title || "Artwork"} — ${it.artistDisplayName || "Unknown"}`;
+  try{
+    if (navigator.share){
+      await navigator.share({ title:"The Collection", text, url });
+    }else{
+      await navigator.clipboard.writeText(url || text);
+      toast("Copied.");
+    }
+  }catch(_e){
+    toast("Couldn’t share.");
+  }
+}
+
+function removeLocal(id){
+  const ok = confirm("Remove this work from your local collection?");
+  if (!ok) return;
+  localWorks = localWorks.filter(w => String(w.__id) !== String(id));
+  saved.delete(String(id));
+  persist();
+  applySearch();
+}
+
+function toast(msg){
+  const t = document.createElement("div");
+  t.textContent = msg;
+  t.style.position="fixed";
+  t.style.left="50%";
+  t.style.bottom=`calc(84px + env(safe-area-inset-bottom))`;
+  t.style.transform="translateX(-50%)";
+  t.style.padding="10px 12px";
+  t.style.borderRadius="999px";
+  t.style.border="1px solid rgba(0,0,0,0.12)";
+  t.style.background="rgba(255,255,255,0.92)";
+  t.style.backdropFilter="blur(12px)";
+  t.style.boxShadow="0 18px 40px rgba(0,0,0,0.12)";
+  t.style.fontSize="12px";
+  t.style.color="rgba(0,0,0,0.75)";
+  t.style.zIndex="80";
+  document.body.appendChild(t);
+  setTimeout(()=>{ t.style.opacity="0"; t.style.transition="opacity 180ms ease"; }, 1500);
+  setTimeout(()=> t.remove(), 1750);
+}
+
+function applySearch(){
+  const term = (qEl.value || "").trim().toLowerCase();
+  const items = combinedList();
+
+  const filtered = term
+    ? items.filter(it => {
+        const hay = [
+          it.title, it.artistDisplayName, it.medium, it.department, it.culture, it.period,
+          it.category, it.location, it.acquiredFrom,
+          (it.tags || []).join(" "),
+          it.dimensions, it.notes, it.provenance
+        ].filter(Boolean).join(" ").toLowerCase();
+        return hay.includes(term);
+      })
+    : items;
+
+  renderStories(filtered);
+  renderFeed(filtered);
+}
+
+qEl.addEventListener("input", applySearch);
+
+/* Load Met items */
+async function loadMet(){
+  // show skeletons
+  feedEl.innerHTML = `<div class="skel"></div><div class="skel"></div>`;
+
+  try{
+    const search = await fetch(`${API}/search?hasImages=true&q=painting`);
+    const data = await search.json();
+    const ids = (data.objectIDs || []).slice(0, 80);
+
+    const picked = [];
+    for (let id of ids){
+      if (picked.length >= 18) break;
+      try{
+        const res = await fetch(`${API}/objects/${id}`);
+        const obj = await res.json();
+        const img = obj.primaryImageSmall || obj.primaryImage;
+        if (!img) continue;
+
+        picked.push({
+          __id: String(obj.objectID),
+          primaryImageSmall: img,
+          primaryImage: obj.primaryImage || img,
+          title: obj.title || "Untitled",
+          artistDisplayName: obj.artistDisplayName || "Unknown",
+          objectDate: obj.objectDate || "",
+          medium: obj.medium || "",
+          culture: obj.culture || "",
+          period: obj.period || "",
+          department: obj.department || "",
+          objectName: obj.objectName || "",
+          objectURL: obj.objectURL || ""
+        });
+      }catch(_e){}
+    }
+
+    metItems = picked;
+    applySearch();
+  }catch(_e){
+    feedEl.innerHTML = `<div class="post"><div class="body"><p class="desc">Couldn’t load The Met right now. Try refresh.</p></div></div>`;
+  }
+}
+
+navRefresh.addEventListener("click", () => loadMet());
+
+/* Saved view toggle (simple) */
+let savedOnly = false;
+navSaved.addEventListener("click", () => {
+  savedOnly = !savedOnly;
+  document.getElementById("navSaved").classList.toggle("active", savedOnly);
+
+  const term = (qEl.value || "").trim().toLowerCase();
+  const items = combinedList();
+
+  let filtered = term
+    ? items.filter(it => {
+        const hay = [
+          it.title, it.artistDisplayName, it.medium, it.department, it.culture, it.period,
+          it.category, it.location, it.acquiredFrom,
+          (it.tags || []).join(" "),
+          it.dimensions, it.notes, it.provenance
+        ].filter(Boolean).join(" ").toLowerCase();
+        return hay.includes(term);
+      })
+    : items;
+
+  if (savedOnly){
+    filtered = filtered.filter(it => saved.has(String(it.__id)));
+  }
+
+  renderStories(filtered);
+  renderFeed(filtered);
+});
+
+/* Add Work sheet */
+function openAdd(){
+  addModal.classList.add("open");
+  addModal.setAttribute("aria-hidden", "false");
+  addErr.style.display = "none";
+}
+function closeAddSheet(){
+  addModal.classList.remove("open");
+  addModal.setAttribute("aria-hidden", "true");
+  resetAdd();
+}
+function resetAdd(){
+  imageInput.value = "";
+  imageData = "";
+  preview.textContent = "No image";
+  addErr.style.display = "none";
+  ["fTitle","fArtist","fYear","fMedium","fDims","fEdition","fTags","fAcqDate","fAcqFrom","fPrice","fLocation","fCondition","fInsValue","fDocUrl","fProv","fNotes"].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+  document.getElementById("fCurrency").value = "USD";
+  document.getElementById("fCategory").value = "Painting";
+}
+
+addBtn.addEventListener("click", openAdd);
+closeAdd.addEventListener("click", closeAddSheet);
+cancelAdd.addEventListener("click", closeAddSheet);
+addModal.addEventListener("click", (e) => { if (e.target === addModal) closeAddSheet(); });
+
+window.addEventListener("keydown", (e)=> {
+  if (e.key === "Escape" && addModal.classList.contains("open")) closeAddSheet();
+});
+
+imageInput.addEventListener("change", () => {
+  const file = imageInput.files && imageInput.files[0];
+  if (!file) return;
+  if (!file.type.startsWith("image/")){
+    addErr.textContent = "Please upload an image file.";
+    addErr.style.display = "block";
+    return;
+  }
+  // keep it light for a prototype
+  const maxMB = 6;
+  if (file.size > maxMB * 1024 * 1024){
+    addErr.textContent = `That image is larger than ${maxMB}MB. Try a smaller one for this prototype.`;
+    addErr.style.display = "block";
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    imageData = reader.result;
+    preview.innerHTML = `<img src="${imageData}" alt="Uploaded artwork preview">`;
+    addErr.style.display = "none";
+  };
+  reader.readAsDataURL(file);
+});
+
+saveWork.addEventListener("click", () => {
+  const title = (document.getElementById("fTitle").value || "").trim();
+  const artist = (document.getElementById("fArtist").value || "").trim();
+  if (!imageData){
+    addErr.textContent = "Please add a photo of the work.";
+    addErr.style.display = "block";
+    return;
+  }
+  if (!title || !artist){
+    addErr.textContent = "Please include at least a Title and Artist.";
+    addErr.style.display = "block";
+    return;
+  }
+
+  const tags = (document.getElementById("fTags").value || "")
+    .split(",").map(t => t.trim()).filter(Boolean).slice(0, 10);
+
+  const id = "local_" + Date.now() + "_" + Math.floor(Math.random()*1000);
+
+  const work = {
+    __id: id,
+    primaryImageSmall: imageData,
+    primaryImage: imageData,
+    title,
+    artistDisplayName: artist,
+    year: (document.getElementById("fYear").value || "").trim(),
+    medium: (document.getElementById("fMedium").value || "").trim(),
+    dimensions: (document.getElementById("fDims").value || "").trim(),
+    edition: (document.getElementById("fEdition").value || "").trim(),
+    category: document.getElementById("fCategory").value,
+    tags,
+    acquiredDate: document.getElementById("fAcqDate").value || "",
+    acquiredFrom: (document.getElementById("fAcqFrom").value || "").trim(),
+    purchasePrice: (document.getElementById("fPrice").value || "").trim(),
+    currency: document.getElementById("fCurrency").value,
+    location: (document.getElementById("fLocation").value || "").trim(),
+    condition: (document.getElementById("fCondition").value || "").trim(),
+    insuranceValue: (document.getElementById("fInsValue").value || "").trim(),
+    docUrl: (document.getElementById("fDocUrl").value || "").trim(),
+    provenance: (document.getElementById("fProv").value || "").trim(),
+    notes: (document.getElementById("fNotes").value || "").trim(),
+    objectURL: ""
+  };
+
+  localWorks.unshift(work);
+  persist();
+  closeAddSheet();
+  toast("Added.");
+  applySearch();
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+
+/* Initial load */
+loadMet();
+applySearch();
+</script>
+</body>
+</html>
